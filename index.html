@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f2eb" />
+    <meta name="description" content="A little inspiration, one quote at a time." />
+    <title>Small Words — Random Quote Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="topbar">
+        <a class="wordmark" href="#" aria-label="Small Words home">
+          <span class="wordmark-mark" aria-hidden="true">s.</span>
+          <span>small words</span>
+        </a>
+        <span class="edition">A MOMENT OF INSPIRATION</span>
+      </header>
+
+      <section class="quote-stage" aria-labelledby="page-title">
+        <div class="intro">
+          <span class="eyebrow"><span class="eyebrow-line"></span> A LITTLE PAUSE</span>
+          <h1 id="page-title">Words to carry<br /><em>with you.</em></h1>
+        </div>
+
+        <article class="quote-card" aria-live="polite" aria-atomic="true">
+          <span class="quote-mark" aria-hidden="true">“</span>
+          <div class="quote-content">
+            <p class="quote-text" id="quote-text">The secret of getting ahead is getting started.</p>
+            <div class="quote-byline">
+              <span class="byline-rule" aria-hidden="true"></span>
+              <p class="quote-author" id="quote-author">Mark Twain</p>
+            </div>
+          </div>
+          <span class="card-index" id="card-index">01 / 12</span>
+        </article>
+
+        <div class="actions">
+          <p class="helper-text"><span class="sparkle" aria-hidden="true">✳</span> A fresh thought, whenever you need one.</p>
+          <button class="new-quote" id="new-quote" type="button">
+            <span>New quote</span>
+            <span class="button-arrow" aria-hidden="true">↗</span>
+          </button>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>TAKE WHAT YOU NEED. LEAVE THE REST.</span>
+        <span class="footer-dot" aria-hidden="true">●</span>
+        <span>MADE FOR THE IN-BETWEEN</span>
+      </footer>
+    </main>
+  </body>
+</html>
