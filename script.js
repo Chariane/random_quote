@@ -1,51 +1,85 @@
-const quotes = [
-  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
-  { text: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
-  { text: "You are never too old to set another goal or to dream a new dream.", author: "C. S. Lewis" },
-  { text: "No act of kindness, no matter how small, is ever wasted.", author: "Aesop" },
-  { text: "Happiness depends upon ourselves.", author: "Aristotle" },
-  { text: "Nothing will work unless you do.", author: "Maya Angelou" },
-  { text: "The journey of a thousand miles begins with one step.", author: "Lao Tzu" },
-  { text: "Do what you can, with what you have, where you are.", author: "Theodore Roosevelt" },
-  { text: "Act as if what you do makes a difference. It does.", author: "William James" },
-  { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
-  { text: "What we think, we become.", author: "Buddha" },
-  { text: "Keep your face always toward the sunshine, and shadows will fall behind you.", author: "Walt Whitman" },
-];
+const quoteApiUrl = "https://dummyjson.com/quotes/random";
 
 const quoteText = document.querySelector("#quote-text");
 const quoteAuthor = document.querySelector("#quote-author");
 const quoteByline = document.querySelector(".quote-byline");
 const cardIndex = document.querySelector("#card-index");
 const newQuoteButton = document.querySelector("#new-quote");
+const newQuoteLabel = document.querySelector("#new-quote-label");
+const apiStatus = document.querySelector("#api-status");
 const themeToggle = document.querySelector("#theme-toggle");
 const themeLabel = document.querySelector("#theme-label");
 const themeColor = document.querySelector("#theme-color");
 const copyButton = document.querySelector("#copy-quote");
 const copyLabel = document.querySelector("#copy-label");
-const actionStatus = document.querySelector("#action-status");
-let currentIndex = -1;
+let currentQuote = null;
 let changeTimer;
 let copyLabelTimer;
 
-function showRandomQuote() {
-  let nextIndex;
-  do {
-    nextIndex = Math.floor(Math.random() * quotes.length);
-  } while (quotes.length > 1 && nextIndex === currentIndex);
-
-  currentIndex = nextIndex;
-  const quote = quotes[currentIndex];
+function showQuote(quote) {
+  currentQuote = quote;
   quoteText.classList.add("is-changing");
   quoteByline.classList.add("is-changing");
   window.clearTimeout(changeTimer);
   changeTimer = window.setTimeout(() => {
-    quoteText.textContent = quote.text;
+    quoteText.textContent = quote.quote;
     quoteAuthor.textContent = quote.author;
-    cardIndex.innerHTML = `${String(currentIndex + 1).padStart(2, "0")} <span>/</span> ${String(quotes.length).padStart(2, "0")}`;
+    cardIndex.textContent = `#${String(quote.id).padStart(3, "0")}`;
     quoteText.classList.remove("is-changing");
     quoteByline.classList.remove("is-changing");
   }, 150);
+}
+
+async function getRandomQuote() {
+  if (newQuoteButton.disabled) return;
+
+  newQuoteButton.disabled = true;
+  newQuoteButton.setAttribute("aria-busy", "true");
+  newQuoteLabel.textContent = "Finding a quote…";
+  apiStatus.classList.remove("is-visible");
+  apiStatus.textContent = "";
+
+  try {
+    let nextQuote = null;
+    // A random API can occasionally return the previous quote. Retry so every
+    // successful click produces a different one.
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const response = await fetch(`${quoteApiUrl}?_=${Date.now()}-${attempt}`, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!response.ok) throw new Error("Quote service is unavailable.");
+      const quote = await response.json();
+      if (
+        typeof quote.quote !== "string" ||
+        typeof quote.author !== "string" ||
+        !Number.isFinite(Number(quote.id))
+      ) {
+        throw new Error("The quote service returned an unexpected response.");
+      }
+      if (!currentQuote || quote.quote.trim() !== currentQuote.quote.trim()) {
+        nextQuote = quote;
+        break;
+      }
+    }
+
+    if (!nextQuote) throw new Error("The service repeated the previous quote.");
+    showQuote(nextQuote);
+  } catch (_) {
+    apiStatus.textContent = currentQuote
+      ? "Couldn’t load a new quote. Check your connection and try again."
+      : "Couldn’t reach the quote library. Check your connection, then try again.";
+    apiStatus.classList.add("is-visible");
+    if (!currentQuote) {
+      quoteText.textContent = "Your next thought is just a retry away.";
+      quoteAuthor.textContent = "Connection needed";
+      cardIndex.textContent = "—";
+    }
+  } finally {
+    newQuoteButton.disabled = false;
+    newQuoteButton.removeAttribute("aria-busy");
+    newQuoteLabel.textContent = "Another thought";
+  }
 }
 
 function applyTheme(theme, save = false) {
@@ -67,8 +101,8 @@ function applyTheme(theme, save = false) {
 }
 
 async function copyCurrentQuote() {
-  const quote = quotes[currentIndex];
-  const textToCopy = `“${quote.text}” — ${quote.author}`;
+  if (!currentQuote) return;
+  const textToCopy = `“${currentQuote.quote}” — ${currentQuote.author}`;
 
   try {
     await navigator.clipboard.writeText(textToCopy);
@@ -83,13 +117,15 @@ async function copyCurrentQuote() {
     const copied = document.execCommand("copy");
     temporaryInput.remove();
     if (!copied) {
-      actionStatus.textContent = "Could not copy the quote.";
+      apiStatus.textContent = "Couldn’t copy the quote.";
+      apiStatus.classList.add("is-visible");
       return;
     }
   }
 
   copyLabel.textContent = "Copied";
-  actionStatus.textContent = "Quote copied to clipboard.";
+  apiStatus.textContent = "Quote copied to clipboard.";
+  apiStatus.classList.add("is-visible");
   window.clearTimeout(copyLabelTimer);
   copyLabelTimer = window.setTimeout(() => {
     copyLabel.textContent = "Copy";
@@ -100,7 +136,7 @@ themeToggle.addEventListener("click", () => {
   const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
   applyTheme(nextTheme, true);
 });
-newQuoteButton.addEventListener("click", showRandomQuote);
+newQuoteButton.addEventListener("click", getRandomQuote);
 copyButton.addEventListener("click", copyCurrentQuote);
 applyTheme(document.documentElement.dataset.theme || "light");
-showRandomQuote();
+getRandomQuote();
