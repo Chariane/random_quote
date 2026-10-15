@@ -6,9 +6,11 @@ A small web app that displays a random quote and its author. It picks a quote wh
 
 - Shows the quote and author clearly
 - Avoids showing the same quote twice in a row
-- Simple layout that works on small screens
+- Includes a persistent light and dark theme toggle
+- Lets you copy a quote with its author
+- Responsive editorial design for desktop and mobile
 
-Quotes are stored in the script.js file. The app does not need a server or an API.
+Quotes are stored in the script.js file. The app does not need a server or an API. Your theme preference is saved in this browser.
 
 ## Run the app
 

@@ -1,57 +1,88 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f5f2eb" />
+    <meta name="theme-color" content="#f6f5f1" id="theme-color" />
     <meta name="description" content="A little inspiration, one quote at a time." />
-    <title>Small Words — Random Quote Generator</title>
+    <title>Small Words — A moment of inspiration</title>
+    <script>
+      (() => {
+        try {
+          const savedTheme = localStorage.getItem("small-words-theme");
+          const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.dataset.theme = savedTheme || (systemPrefersDark ? "dark" : "light");
+        } catch (_) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js" defer></script>
   </head>
   <body>
     <main class="page-shell">
       <header class="topbar">
-        <a class="wordmark" href="#" aria-label="Small Words home">
-          <span class="wordmark-mark" aria-hidden="true">s.</span>
-          <span>small words</span>
+        <a class="brand" href="#" aria-label="Small Words home">
+          <span class="brand-mark" aria-hidden="true">“</span>
+          <span class="brand-name">small words<span class="brand-period">.</span></span>
         </a>
-        <span class="edition">A MOMENT OF INSPIRATION</span>
+        <div class="topbar-right">
+          <span class="topbar-note"><span class="live-dot" aria-hidden="true"></span> A PAUSE FOR PERSPECTIVE</span>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch theme">
+            <svg class="theme-icon sun-icon" id="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.7"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+            <svg class="theme-icon moon-icon" id="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.1 15.3A8.5 8.5 0 0 1 8.7 3.9 8.6 8.6 0 1 0 20.1 15.3Z"/><path d="M16.5 3.5v3m-1.5-1.5h3"/></svg>
+            <span class="theme-label" id="theme-label">Light</span>
+          </button>
+        </div>
       </header>
 
       <section class="quote-stage" aria-labelledby="page-title">
-        <div class="intro">
-          <span class="eyebrow"><span class="eyebrow-line"></span> A LITTLE PAUSE</span>
-          <h1 id="page-title">Words to carry<br /><em>with you.</em></h1>
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> YOUR DAILY BREATH OF INSPIRATION</span>
+          <h1 id="page-title">A little perspective<br /><em>goes a long way.</em></h1>
+          <p class="intro-copy">Take a moment. Find a thought that stays with you.</p>
         </div>
 
         <article class="quote-card" aria-live="polite" aria-atomic="true">
-          <span class="quote-mark" aria-hidden="true">“</span>
-          <div class="quote-content">
+          <div class="card-topline">
+            <span class="card-kicker"><span class="sparkle" aria-hidden="true">✳</span> A THOUGHT TO KEEP</span>
+            <span class="card-index" id="card-index">01 <span>/</span> 12</span>
+          </div>
+          <div class="quote-body">
+            <span class="quote-mark" aria-hidden="true">“</span>
             <p class="quote-text" id="quote-text">The secret of getting ahead is getting started.</p>
             <div class="quote-byline">
               <span class="byline-rule" aria-hidden="true"></span>
               <p class="quote-author" id="quote-author">Mark Twain</p>
             </div>
           </div>
-          <span class="card-index" id="card-index">01 / 12</span>
+          <div class="card-bottomline">
+            <span>LET THE WORDS FIND YOU</span>
+            <button class="copy-quote" id="copy-quote" type="button" aria-label="Copy quote" title="Copy quote">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>
+              <span id="copy-label">Copy</span>
+            </button>
+          </div>
         </article>
 
         <div class="actions">
-          <p class="helper-text"><span class="sparkle" aria-hidden="true">✳</span> A fresh thought, whenever you need one.</p>
+          <p class="helper-text"><span class="helper-star" aria-hidden="true">✦</span> A new thought is just one click away.</p>
           <button class="new-quote" id="new-quote" type="button">
-            <span>New quote</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9a7 7 0 0 1 11.8-2L20 12M4 12l2.7 5a7 7 0 0 0 11.8-2"/></svg>
+            <span>Another thought</span>
             <span class="button-arrow" aria-hidden="true">↗</span>
           </button>
         </div>
+        <p class="visually-hidden" id="action-status" role="status" aria-live="polite"></p>
       </section>
 
       <footer class="footer">
         <span>TAKE WHAT YOU NEED. LEAVE THE REST.</span>
-        <span class="footer-dot" aria-hidden="true">●</span>
+        <span class="footer-divider" aria-hidden="true"></span>
         <span>MADE FOR THE IN-BETWEEN</span>
       </footer>
     </main>
